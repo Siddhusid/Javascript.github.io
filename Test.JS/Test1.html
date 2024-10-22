@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test in JavaScript</title>
+    <style> 
+        form {
+            margin-bottom: 20px;
+        }
+        #arrayContainer {
+            margin-top: 10px;
+            padding: 10px;
+            border: 0px solid #000;
+            display: block;
+            min-height: 40px;
+        }
+        .array-item {
+            margin: 5px 0; 
+            padding: 5px 10px;
+            border: 1px solid #000;
+            border-radius: 4px;
+            background-color: gray;
+            width: fit-content;
+        }
+        .inserted {
+            background-color: green; 
+        }
+        .highlight {
+            background-color: yellow;
+        }
+        .deleted {
+            background-color: red; 
+        }
+    </style>
+</head>
+<body>
+    <form id="ArrayForm">
+        <label for="Array">Enter Array Item:</label>
+        <input type="text" id="Array">
+        <button type="button" id="insert">Insert</button>
+        <button type="button" id="Delete">Delete</button>
+        <button type="button" id="Search">Find</button>
+        <button type="button" id="Print">Print</button>
+    </form>
+
+    <div id="arrayContainer">
+        <p><strong>Array is Empty</strong></p>
+    </div>
+    <div id ="message"></div>
+
+    <script>
+        let array = [];
+        let lastInsertedIndex = -1;
+
+        function updateDisplay() {
+            const arrayContainer = document.getElementById('arrayContainer');
+            arrayContainer.innerHTML = ''; 
+
+            if (array.length === 0) {
+                arrayContainer.innerHTML = '<p><strong>Array is Empty</strong></p>';
+            } else {
+                array.forEach((item, index) => {
+                    const itemElement = document.createElement('div');
+                    itemElement.classList.add('array-item');
+                    itemElement.textContent = item;
+                    itemElement.id = `item-${index}`;
+
+                    if (index === lastInsertedIndex) {
+                        itemElement.classList.add('inserted');
+                    }
+
+                    arrayContainer.appendChild(itemElement);
+                });
+            }
+        }
+
+        document.getElementById('insert').addEventListener('click', function() {
+            const value = document.getElementById('Array').value;
+            if (value) {
+                array.push(value);
+                lastInsertedIndex = array.length - 1;
+                document.getElementById('Array').value = ''; 
+                updateDisplay();
+            } else {
+                alert("There are no items in the array.");
+            }
+        });
+
+        document.getElementById('Delete').addEventListener('click', function() {
+            const value = document.getElementById('Array').value;
+            if (value) {
+                const index = array.indexOf(value);
+                if (index !== -1) {
+                    const itemElement = document.getElementById(`item-${index}`);
+                    itemElement.classList.add('deleted');
+                    document.getElementById('message').innerHTML = 'Deleting Item';
+                    setTimeout(() => {
+                        array.splice(index, 1);
+                        lastInsertedIndex = -1; 
+                        updateDisplay();
+                        alert(`${value} is deleted`);
+                        document.getElementById('message').innerHTML = '';
+                    }, 1000);
+                } else {
+                    alert(`${value} not found in the array.`);
+                }
+                document.getElementById('Array').value = ''; 
+            } else {
+                alert("There are no items in the array to be deleted.");
+            }
+        });
+
+        document.getElementById('Search').addEventListener('click', function() {
+            const value = document.getElementById('Array').value;
+            if (value) {
+                const index = array.indexOf(value);
+                if (index !== -1) {
+                    const itemElement = document.getElementById(`item-${index}`);
+                    itemElement.classList.add('highlight');
+                    
+                    alert(`${value} found at position ${index + 1}`);
+                } else {
+                    alert(`${value} not found in the array.`);
+                }
+            } else {
+                alert("There are no items in the array.");
+            }
+        });
+
+        document.getElementById('Print').addEventListener('click', function() {
+            if (array.length > 0) {
+                alert(`[${array.join(', ')}]`);
+            } else {
+                alert('Array is empty.');
+            }
+        });
+    </script>
+</body>
+</html>
